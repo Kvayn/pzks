@@ -61,16 +61,6 @@ public class GraphEntity {
         }else{
             setSystemVv();
         }
-
-//        Entities.Node node1 = entities.new Node(1.0, 1);
-//        Entities.Node node2 = entities.new Node(1.0, 2);
-//        Entities.Node node3 = entities.new Node(1.0, 3);
-//        Entities.Node node4 = entities.new Node(1.0, 4);
-//        Entities.Node node5 = entities.new Node(1.0, 5);
-//        graph.addEdge(entities.new Link(1.0, 1), node1, node2);
-//        graph.addEdge(entities.new Link(1.0, 2), node3, node4);
-//        graph.addEdge(entities.new Link(1.0, 3), node4, node5);
-//        graph.addEdge(entities.new Link(1.0, 4), node5, node2);
     }
     Transformer<Entities.Node, Paint> paintTransformer = new Transformer<Entities.Node, Paint>() {
         @Override
@@ -166,9 +156,12 @@ public class GraphEntity {
         Operations operations = new Operations();
         return !operations.isAcyclic(graph);
     }
-    public void labTwo(){
-        tasks = new ArrayList<>();
+    public ArrayList<resultVertex> labTwo(){
+        ArrayList<resultVertex> result = new ArrayList<>();
+        ArrayList<Entities.Node> maxPathByVCount = new ArrayList<>();
+        ArrayList<Entities.Node> maxPathByTime = new ArrayList<>();
         ArrayList<ArrayList<Entities.Node>> tmp = new ArrayList<>();
+        ArrayList<Entities.Node> temp = new ArrayList<>();
         ArrayList<Entities.Node> ends = new ArrayList<>();
         Iterator<Entities.Node> nodes = graph.getVertices().iterator();
         while (nodes.hasNext()){
@@ -181,12 +174,31 @@ public class GraphEntity {
         while (iterator.hasNext()){
             Entities.Node node = iterator.next();
             for (int i = 0; i < ends.size(); i++){
-                tmp.add(getCriticalPathByVertexcount(node, ends.get(i)));
+                temp = getCriticalPathByVertexcount(node, ends.get(i));
+                if (temp.size() > 0) {
+                    tmp.add(temp);
+                    maxPathByVCount = getMaxPathByVertexCount(tmp);
+                    tmp = new ArrayList<>();
+                }
+
+
+                temp = getCriticalPathByTime(node, ends.get(i));
+                if (temp.size() > 0){
+                    tmp.add(temp);
+                    maxPathByTime = getMaxPathByTime(tmp);
+                    tmp = new ArrayList<>();
+                }
+
+
             }
-            tasks.add(getMaxPathByVertexCount(tmp));
-            tmp = new ArrayList<>();
+            if (maxPathByTime.size() > 0 && maxPathByVCount.size() > 0){
+                result.add(new resultVertex(node, getNormalizedVertexRate(maxPathByTime, maxPathByVCount)));
+            }
+
+
         }
-        System.out.println(tasks);
+        Collections.sort(result);
+        return  result;
     }
     public ArrayList<Entities.Node> labThree(){
         ArrayList<Entities.Node> result = new ArrayList<>();
@@ -257,6 +269,9 @@ public class GraphEntity {
     }
     public ArrayList<Entities.Node> getMaxPathByVertexCount(ArrayList<ArrayList<Entities.Node>> pathes){
         ArrayList<Entities.Node> result = new ArrayList<>();
+        if (result.size() == 1){
+            return pathes.get(0);
+        }
         for (int i = 0; i < pathes.size(); i++){
             if (result.size() < pathes.get(i).size()){
                 result = pathes.get(i);
@@ -305,11 +320,28 @@ public class GraphEntity {
     }
     private ArrayList<Entities.Node> getMaxPathByTime(ArrayList<ArrayList<Entities.Node>> pathes){
         ArrayList<Entities.Node> result = new ArrayList<>();
-        System.out.println(pathes);
         for (int i = 0; i < pathes.size(); i++){
             if (getPathTime(pathes.get(i)) > getPathTime(result)){
                 result = pathes.get(i);
             }
+        }
+        return result;
+    }
+    private double getNormalizedVertexRate(ArrayList<Entities.Node> pathByTime,
+                                           ArrayList<Entities.Node> pathByVCount){
+        double result;
+        double rate = 0.0;
+        double general = getGeneralTime() + graph.getVertexCount();
+        rate = rate + getPathTime(pathByTime);
+        rate = rate + pathByVCount.size();
+        result = rate/general;
+        return result;
+    }
+    private double getGeneralTime(){
+        double result = 0.0;
+        ArrayList<Entities.Link> links = new ArrayList<>(graph.getEdges());
+        for (Entities.Link link: links){
+            result = result + link.getWight();
         }
         return result;
     }

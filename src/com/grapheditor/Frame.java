@@ -208,10 +208,22 @@ public class Frame extends JFrame {
         var1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                Graph<Entities.Node, Entities.Link> graph = taskGraphEntity.vv.getModel().getGraphLayout().getGraph();
-//                ArrayList<Entities.Node> tmp = new ArrayList<Entities.Node>(graph.getVertices());
-                taskGraphEntity.labTwo();
-                //System.out.println(taskGraphEntity.pathes);
+                if (!taskGraphEntity.isCycled()){
+                    ArrayList<resultVertex> result = taskGraphEntity.labTwo();
+                    String out = "";
+                    for (int i = 0; i < result.size(); i++) {
+                        if (i == result.size() - 1) {
+                            out = out + result.get(i).getNode().getId();
+                        }else{
+                            out = out + result.get(i).getNode().getId() + ", ";
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, out);
+                    System.out.println(result);
+                }else {
+                    JOptionPane.showMessageDialog(null, "Graph is Cycled, it's impossible to do planing");
+                }
+
             }
         });
         var5.addActionListener(new ActionListener() {
@@ -234,9 +246,6 @@ public class Frame extends JFrame {
 
             }
         });
-
-
-
         var16.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
