@@ -161,7 +161,7 @@ public class GraphEntity {
         ArrayList<Entities.Node> maxPathByVCount = new ArrayList<>();
         ArrayList<Entities.Node> maxPathByTime = new ArrayList<>();
         ArrayList<ArrayList<Entities.Node>> tmp = new ArrayList<>();
-        ArrayList<Entities.Node> temp = new ArrayList<>();
+        ArrayList<ArrayList<Entities.Node>> tmp1 = new ArrayList<>();
         ArrayList<Entities.Node> ends = new ArrayList<>();
         Iterator<Entities.Node> nodes = graph.getVertices().iterator();
         while (nodes.hasNext()){
@@ -174,28 +174,14 @@ public class GraphEntity {
         while (iterator.hasNext()){
             Entities.Node node = iterator.next();
             for (int i = 0; i < ends.size(); i++){
-                temp = getCriticalPathByVertexcount(node, ends.get(i));
-                if (temp.size() > 0) {
-                    tmp.add(temp);
-                    maxPathByVCount = getMaxPathByVertexCount(tmp);
-                    tmp = new ArrayList<>();
-                }
-
-
-                temp = getCriticalPathByTime(node, ends.get(i));
-                if (temp.size() > 0){
-                    tmp.add(temp);
-                    maxPathByTime = getMaxPathByTime(tmp);
-                    tmp = new ArrayList<>();
-                }
-
-
+                tmp.add(getCriticalPathByVertexcount(node, ends.get(i)));
+                tmp1.add(getCriticalPathByTime(node, ends.get(i)));
             }
-            if (maxPathByTime.size() > 0 && maxPathByVCount.size() > 0){
-                result.add(new resultVertex(node, getNormalizedVertexRate(maxPathByTime, maxPathByVCount)));
-            }
-
-
+            maxPathByVCount = getMaxPathByVertexCount(tmp);
+            maxPathByTime = getMaxPathByTime(tmp1);
+            tmp = new ArrayList<>();
+            tmp1 = new ArrayList<>();
+            result.add(new resultVertex(node, getNormalizedVertexRate(maxPathByTime, maxPathByVCount)));
         }
         Collections.sort(result);
         return  result;

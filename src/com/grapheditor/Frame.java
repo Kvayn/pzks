@@ -219,7 +219,7 @@ public class Frame extends JFrame {
                         }
                     }
                     JOptionPane.showMessageDialog(null, out);
-                    System.out.println(result);
+
                 }else {
                     JOptionPane.showMessageDialog(null, "Graph is Cycled, it's impossible to do planing");
                 }

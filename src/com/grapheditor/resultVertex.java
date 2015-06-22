@@ -35,7 +35,7 @@ public class resultVertex implements Comparable<resultVertex>{
     public String toString() {
         return "resultVertex{" +
                 "node=" + node +
-                ", rate=" + rate +
+                ", rate=" + Math.rint(rate * 1000.0)/1000 +
                 '}';
     }
 }
