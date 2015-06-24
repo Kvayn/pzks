@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="agape-0.4">
     <CLASSES>
-      <root url="jar://$USER_HOME$/KPI 10/agape-0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/agape-0.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
